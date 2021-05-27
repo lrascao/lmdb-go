@@ -23,3 +23,6 @@ check:
 	find . -name '*.go' | xargs goimports -d | tee /dev/stderr | wc -l | xargs test 0 -eq
 	which golint > /dev/null
 	golint ./... | tee /dev/stderr | wc -l | xargs test 0 -eq
+
+bench:
+	pushd lmdb; go test -bench=. -benchmem; popd
