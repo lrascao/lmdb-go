@@ -59,6 +59,44 @@ func (r *readerList) Next(ln string) error {
 	return nil
 }
 
+// repeatedly create write txns.
+func BenchmarkTxn_Write(b *testing.B) {
+	env := setup(b)
+	defer clean(env, b)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		err := env.Update(func(txn *Txn) (err error) {
+			// do nothing here, we just want to measure the write txn creation overhead
+			return nil
+		})
+		if err != nil {
+			b.Error(err)
+			return
+		}
+	}
+	defer b.StopTimer()
+}
+
+// repeatedly create read txns.
+func BenchmarkTxn_Read(b *testing.B) {
+	env := setup(b)
+	defer clean(env, b)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		err := env.View(func(txn *Txn) (err error) {
+			// do nothing here, we just want to measure the write txn creation overhead
+			return nil
+		})
+		if err != nil {
+			b.Error(err)
+			return
+		}
+	}
+	defer b.StopTimer()
+}
+
 // repeatedly put (overwrite) keys.
 func BenchmarkTxn_Put(b *testing.B) {
 	initRandSource(b)
