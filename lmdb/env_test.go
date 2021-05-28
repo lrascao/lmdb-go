@@ -11,6 +11,10 @@ import (
 	"testing"
 )
 
+const (
+	defaultMaxDBs = 64 << 10
+)
+
 func TestEnv_Path_notOpen(t *testing.T) {
 	env, err := NewEnv()
 	if err != nil {
@@ -485,7 +489,7 @@ func testEnvCopy(t *testing.T, flags uint, useflags bool, usefd bool) {
 }
 
 func TestEnv_Sync(t *testing.T) {
-	env := setupFlags(t, NoSync)
+	env := setupFlags(t, NoSync, defaultMaxDBs)
 	defer clean(env, t)
 
 	item := struct{ k, v []byte }{[]byte("k0"), []byte("v0")}
@@ -508,10 +512,10 @@ func TestEnv_Sync(t *testing.T) {
 }
 
 func setup(t T) *Env {
-	return setupFlags(t, 0)
+	return setupFlags(t, 0, defaultMaxDBs)
 }
 
-func setupFlags(t T, flags uint) *Env {
+func setupFlags(t T, flags uint, max_dbs int) *Env {
 	env, err := NewEnv()
 	if err != nil {
 		t.Fatalf("env: %s", err)
@@ -524,7 +528,7 @@ func setupFlags(t T, flags uint) *Env {
 	if err != nil {
 		t.Fatalf("mkdir: %s", path)
 	}
-	err = env.SetMaxDBs(64 << 10)
+	err = env.SetMaxDBs(max_dbs)
 	if err != nil {
 		t.Fatalf("setmaxdbs: %v", err)
 	}

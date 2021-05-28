@@ -80,7 +80,7 @@ func BenchmarkTxn_Write(b *testing.B) {
 
 // repeatedly create read txns.
 func BenchmarkTxn_Read(b *testing.B) {
-	env := setup(b)
+	env := setupFlags(b, 0, 1)
 	defer clean(env, b)
 
 	b.ResetTimer()
@@ -170,7 +170,7 @@ func BenchmarkTxn_PutReserve(b *testing.B) {
 // environment with WriteMap.
 func BenchmarkTxn_PutReserve_writemap(b *testing.B) {
 	initRandSource(b)
-	env := setupFlags(b, WriteMap)
+	env := setupFlags(b, WriteMap, defaultMaxDBs)
 	defer clean(env, b)
 
 	dbi := openBenchDBI(b, env)
@@ -205,7 +205,7 @@ func BenchmarkTxn_PutReserve_writemap(b *testing.B) {
 // repeatedly put (overwrite) keys.
 func BenchmarkTxn_Put_writemap(b *testing.B) {
 	initRandSource(b)
-	env := setupFlags(b, WriteMap)
+	env := setupFlags(b, WriteMap, defaultMaxDBs)
 	defer clean(env, b)
 
 	dbi := openBenchDBI(b, env)
